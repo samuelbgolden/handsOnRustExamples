@@ -1,0 +1,10 @@
+C:\Users\Samuel\src\samuelbgolden\handsOnRustExamples\clippy\target\debug\deps\bracket_algorithm_traits-2ce5fe93833f866f.rmeta: C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\lib.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\algorithm2d.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\algorithm3d.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\basemap.rs
+
+C:\Users\Samuel\src\samuelbgolden\handsOnRustExamples\clippy\target\debug\deps\libbracket_algorithm_traits-2ce5fe93833f866f.rlib: C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\lib.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\algorithm2d.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\algorithm3d.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\basemap.rs
+
+C:\Users\Samuel\src\samuelbgolden\handsOnRustExamples\clippy\target\debug\deps\bracket_algorithm_traits-2ce5fe93833f866f.d: C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\lib.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\algorithm2d.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\algorithm3d.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\basemap.rs
+
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\lib.rs:
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\algorithm2d.rs:
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\algorithm3d.rs:
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-algorithm-traits-0.8.2\src\basemap.rs:

@@ -1,0 +1,10 @@
+C:\Users\Samuel\src\samuelbgolden\handsOnRustExamples\clippy\target\debug\deps\bracket_pathfinding-4bf0e0691d72e6a3.rmeta: C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\lib.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\astar.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\dijkstra.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\fieldofview.rs
+
+C:\Users\Samuel\src\samuelbgolden\handsOnRustExamples\clippy\target\debug\deps\libbracket_pathfinding-4bf0e0691d72e6a3.rlib: C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\lib.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\astar.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\dijkstra.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\fieldofview.rs
+
+C:\Users\Samuel\src\samuelbgolden\handsOnRustExamples\clippy\target\debug\deps\bracket_pathfinding-4bf0e0691d72e6a3.d: C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\lib.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\astar.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\dijkstra.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\fieldofview.rs
+
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\lib.rs:
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\astar.rs:
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\dijkstra.rs:
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\bracket-pathfinding-0.8.4\src\fieldofview.rs:

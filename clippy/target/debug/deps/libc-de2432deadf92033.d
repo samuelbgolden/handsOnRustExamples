@@ -1,0 +1,11 @@
+C:\Users\Samuel\src\samuelbgolden\handsOnRustExamples\clippy\target\debug\deps\libc-de2432deadf92033.rmeta: C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\lib.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\macros.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\fixed_width_ints.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\windows\mod.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\windows\msvc\mod.rs
+
+C:\Users\Samuel\src\samuelbgolden\handsOnRustExamples\clippy\target\debug\deps\liblibc-de2432deadf92033.rlib: C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\lib.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\macros.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\fixed_width_ints.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\windows\mod.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\windows\msvc\mod.rs
+
+C:\Users\Samuel\src\samuelbgolden\handsOnRustExamples\clippy\target\debug\deps\libc-de2432deadf92033.d: C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\lib.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\macros.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\fixed_width_ints.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\windows\mod.rs C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\windows\msvc\mod.rs
+
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\lib.rs:
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\macros.rs:
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\fixed_width_ints.rs:
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\windows\mod.rs:
+C:\Users\Samuel\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.126\src\windows\msvc\mod.rs:
