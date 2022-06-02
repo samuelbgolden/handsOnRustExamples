@@ -8,14 +8,44 @@ enum GameMode {
     End,
 }
 
+#[derive(PartialEq, Debug)]
+enum PlayerState {
+    Falling,
+    Flapping,
+    Diving,
+}
+
+// env config
 const SCREEN_WIDTH: i32 = 80;
 const SCREEN_HEIGHT: i32 = 50;
-const FRAME_DURATION: f32 = 75.0;
+const FRAME_DURATION: f32 = 80.0;
 
+// falling consts
+const FALLING_GRAVITY: f32 = 0.4;
+const TERMINAL_FALLING_VELOCITY: f32 = 2.0;
+const FALLING_CHAR: char = '~';
+
+// flapping consts
+const MAX_FLAPPING_VELOCITY: f32 = -2.0;
+const FLAP_ACCELERATION: f32 = -0.8;
+const FLAP_FRAME_DURATION: usize = 8;
+const FLAPPING_ANIMATION_LENGTH: usize = 8;
+const FLAPPING_CHARS: [char; FLAPPING_ANIMATION_LENGTH] = ['v', 'V', 'v', '_', '-', '^', 'A', '^'];
+
+// diving consts
+const DIVING_CHAR: char = 'v';
+const DIVING_HOLD_LENGTH: usize = 5;
+const DIVING_GRAVITY: f32 = 0.6;
+const TERMINAL_DIVING_VELOCITY: f32 = 3.0;
+
+#[derive(Debug)]
 struct Player {
     x: i32,
     y: i32,
     velocity: f32,
+    flap_frame: usize,
+    state: PlayerState,
+    dive_counter: usize,
 }
 
 struct Obstacle {
@@ -30,17 +60,56 @@ impl Player {
             x,
             y,
             velocity: 0.0,
+            flap_frame: 0,
+            state: PlayerState::Falling,
+            dive_counter: 0,
         }
     }
 
     fn render(&mut self, ctx: &mut BTerm) {
-        ctx.set(0, self.y, YELLOW, BLACK, to_cp437('@'));
+        match self.state {
+            PlayerState::Falling => ctx.set(0, self.y, YELLOW, BLACK, to_cp437(FALLING_CHAR)),
+            PlayerState::Flapping => ctx.set(
+                0,
+                self.y,
+                YELLOW,
+                BLACK,
+                to_cp437(
+                    FLAPPING_CHARS[(self.flap_frame
+                        / (FLAP_FRAME_DURATION / FLAPPING_ANIMATION_LENGTH))
+                        as usize],
+                ),
+            ),
+            PlayerState::Diving => ctx.set(0, self.y, YELLOW, BLACK, to_cp437(DIVING_CHAR)),
+        }
     }
 
     fn gravity_and_move(&mut self) {
-        if self.velocity < 2.0 {
-            self.velocity += 0.2;
+        match self.state {
+            PlayerState::Falling => {
+                if self.velocity < TERMINAL_FALLING_VELOCITY {
+                    self.velocity += FALLING_GRAVITY;
+                } else {
+                    self.velocity = TERMINAL_FALLING_VELOCITY;
+                }
+            }
+            PlayerState::Diving => {
+                if self.velocity < TERMINAL_DIVING_VELOCITY {
+                    self.velocity += DIVING_GRAVITY;
+                } else {
+                    self.velocity = TERMINAL_DIVING_VELOCITY;
+                }
+            }
+            PlayerState::Flapping => {
+                if self.velocity < TERMINAL_FALLING_VELOCITY {
+                    self.velocity += FALLING_GRAVITY;
+                }
+                if self.velocity > MAX_FLAPPING_VELOCITY {
+                    self.velocity += FLAP_ACCELERATION;
+                }
+            }
         }
+
         self.y += self.velocity as i32;
         self.x += 1;
         if self.y < 0 {
@@ -48,8 +117,22 @@ impl Player {
         }
     }
 
-    fn flap(&mut self) {
-        self.velocity = -2.0;
+    fn handle_flap(&mut self) {
+        if self.state == PlayerState::Flapping {
+            self.flap_frame += 1;
+            if self.flap_frame == FLAP_FRAME_DURATION {
+                self.flap_frame = 0;
+                self.state = PlayerState::Falling;
+            }
+        }
+    }
+
+    fn inc_dive_counter(&mut self, ctx: &mut BTerm) {
+        if let Some(VirtualKeyCode::Space) = ctx.key {
+            self.dive_counter += 1;
+        } else {
+            self.dive_counter = 0;
+        }
     }
 }
 
@@ -106,27 +189,28 @@ impl State {
         }
     }
 
+    fn render_debug_info(&self, ctx: &mut BTerm) {
+        ctx.print(0, 0, "Press SPACE to flap");
+        ctx.print(0, 1, &format!("Score: {}", self.score));
+        ctx.print(60, 0, &format!("x={}", self.player.x));
+        ctx.print(60, 1, &format!("y={}", self.player.y));
+        ctx.print(60, 2, &format!("vel={}", self.player.velocity));
+        ctx.print(60, 3, &format!("fidx={}", self.player.flap_frame));
+        ctx.print(60, 4, &format!("state={:?}", self.player.state));
+    }
+
     fn play(&mut self, ctx: &mut BTerm) {
         ctx.cls_bg(NAVY);
         self.frame_time += ctx.frame_time_ms;
         if self.frame_time > FRAME_DURATION {
             self.frame_time = 0.0;
             self.player.gravity_and_move();
-        }
-        if let Some(VirtualKeyCode::Space) = ctx.key {
-            self.player.flap();
+            self.player.handle_flap();
+            self.player.inc_dive_counter(ctx);
         }
         self.player.render(ctx);
-        ctx.print(0, 0, "Press SPACE to flap");
-        ctx.print(0, 1, &format!("Score: {}", self.score));
-        ctx.print_right(
-            79,
-            0,
-            &format!(
-                "x={}, y={}, vel={}",
-                self.player.x, self.player.y, self.player.velocity
-            ),
-        );
+
+        self.render_debug_info(ctx);
 
         self.obstacle.render(ctx, self.player.x);
         if self.player.x > self.obstacle.x {
@@ -134,7 +218,15 @@ impl State {
             self.obstacle = Obstacle::new(self.player.x + SCREEN_WIDTH, self.score);
         }
 
-        if self.player.y > SCREEN_HEIGHT || self.obstacle.hit_obstacle(&self.player) {
+        if self.player.dive_counter >= DIVING_HOLD_LENGTH {
+            self.player.state = PlayerState::Diving;
+        } else if let Some(VirtualKeyCode::Space) = ctx.key {
+            self.player.state = PlayerState::Flapping;
+        } else {
+            self.player.state = PlayerState::Falling;
+        }
+
+        if self.player.y >= SCREEN_HEIGHT || self.obstacle.hit_obstacle(&self.player) {
             self.mode = GameMode::End;
         }
     }
@@ -184,6 +276,7 @@ impl GameState for State {
             GameMode::End => self.dead(ctx),
             GameMode::Playing => self.play(ctx),
         }
+        println!("{:?}", self.player);
     }
 }
 
