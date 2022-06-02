@@ -18,25 +18,26 @@ enum PlayerState {
 // env config
 const SCREEN_WIDTH: i32 = 80;
 const SCREEN_HEIGHT: i32 = 50;
-const FRAME_DURATION: f32 = 80.0;
+const FRAME_DURATION: f32 = 60.0;
+const BACKGROUND_COLOR: (u8, u8, u8) = NAVY;
 
 // falling consts
-const FALLING_GRAVITY: f32 = 0.4;
+const FALLING_GRAVITY: f32 = 0.5;
 const TERMINAL_FALLING_VELOCITY: f32 = 2.0;
 const FALLING_CHAR: char = '~';
 
 // flapping consts
 const MAX_FLAPPING_VELOCITY: f32 = -2.0;
 const FLAP_ACCELERATION: f32 = -0.8;
-const FLAP_FRAME_DURATION: usize = 8;
+const FLAP_FRAME_DURATION: usize = 16;
 const FLAPPING_ANIMATION_LENGTH: usize = 8;
 const FLAPPING_CHARS: [char; FLAPPING_ANIMATION_LENGTH] = ['v', 'V', 'v', '_', '-', '^', 'A', '^'];
 
 // diving consts
 const DIVING_CHAR: char = 'v';
-const DIVING_HOLD_LENGTH: usize = 5;
-const DIVING_GRAVITY: f32 = 0.6;
-const TERMINAL_DIVING_VELOCITY: f32 = 3.0;
+const DIVING_HOLD_LENGTH: usize = 2;
+const DIVING_GRAVITY: f32 = 0.8;
+const TERMINAL_DIVING_VELOCITY: f32 = 3.5;
 
 #[derive(Debug)]
 struct Player {
@@ -66,21 +67,46 @@ impl Player {
         }
     }
 
+    fn set_state(&mut self, state: PlayerState) {
+        if self.state == state {
+            return;
+        }
+
+        match state {
+            PlayerState::Flapping => {
+                self.dive_counter = 0;
+            }
+            PlayerState::Falling => {
+                self.dive_counter = 0;
+                self.flap_frame = 0;
+            }
+            PlayerState::Diving => {
+                self.flap_frame = 0;
+            }
+        }
+        self.state = state;
+        println!("SET PLAYER {:?}", self.state);
+    }
+
     fn render(&mut self, ctx: &mut BTerm) {
         match self.state {
-            PlayerState::Falling => ctx.set(0, self.y, YELLOW, BLACK, to_cp437(FALLING_CHAR)),
+            PlayerState::Falling => {
+                ctx.set(0, self.y, YELLOW, BACKGROUND_COLOR, to_cp437(FALLING_CHAR))
+            }
             PlayerState::Flapping => ctx.set(
                 0,
                 self.y,
                 YELLOW,
-                BLACK,
+                BACKGROUND_COLOR,
                 to_cp437(
                     FLAPPING_CHARS[(self.flap_frame
                         / (FLAP_FRAME_DURATION / FLAPPING_ANIMATION_LENGTH))
                         as usize],
                 ),
             ),
-            PlayerState::Diving => ctx.set(0, self.y, YELLOW, BLACK, to_cp437(DIVING_CHAR)),
+            PlayerState::Diving => {
+                ctx.set(0, self.y, YELLOW, BACKGROUND_COLOR, to_cp437(DIVING_CHAR))
+            }
         }
     }
 
@@ -121,17 +147,8 @@ impl Player {
         if self.state == PlayerState::Flapping {
             self.flap_frame += 1;
             if self.flap_frame == FLAP_FRAME_DURATION {
-                self.flap_frame = 0;
-                self.state = PlayerState::Falling;
+                self.set_state(PlayerState::Falling);
             }
-        }
-    }
-
-    fn inc_dive_counter(&mut self, ctx: &mut BTerm) {
-        if let Some(VirtualKeyCode::Space) = ctx.key {
-            self.dive_counter += 1;
-        } else {
-            self.dive_counter = 0;
         }
     }
 }
@@ -152,12 +169,12 @@ impl Obstacle {
 
         // top half of obstacle
         for y in 0..self.gap_y - half_size {
-            ctx.set(screen_x, y, RED, BLACK, to_cp437('|'));
+            ctx.set(screen_x, y, RED, BACKGROUND_COLOR, to_cp437('|'));
         }
 
         // bottom half of obstacle
         for y in self.gap_y + half_size..SCREEN_HEIGHT {
-            ctx.set(screen_x, y, RED, BLACK, to_cp437('|'));
+            ctx.set(screen_x, y, RED, BACKGROUND_COLOR, to_cp437('|'));
         }
     }
 
@@ -176,6 +193,7 @@ struct State {
     obstacle: Obstacle,
     mode: GameMode,
     score: i32,
+    space_pressed_this_frame: bool,
 }
 
 impl State {
@@ -186,6 +204,7 @@ impl State {
             obstacle: Obstacle::new(SCREEN_WIDTH, 0),
             mode: GameMode::Menu,
             score: 0,
+            space_pressed_this_frame: false,
         }
     }
 
@@ -200,34 +219,56 @@ impl State {
     }
 
     fn play(&mut self, ctx: &mut BTerm) {
-        ctx.cls_bg(NAVY);
+        ctx.cls_bg(BACKGROUND_COLOR);
         self.frame_time += ctx.frame_time_ms;
+
+        //println!("{:?}", ctx.key);
+        if let Some(VirtualKeyCode::Space) = ctx.key {
+            self.space_pressed_this_frame = true;
+        }
+
+        // per frame
         if self.frame_time > FRAME_DURATION {
-            self.frame_time = 0.0;
             self.player.gravity_and_move();
             self.player.handle_flap();
-            self.player.inc_dive_counter(ctx);
+            if self.space_pressed_this_frame {
+                self.player.dive_counter += 1;
+            }
         }
+
+        // handle space input
+        if self.space_pressed_this_frame {
+            if self.player.dive_counter >= DIVING_HOLD_LENGTH {
+                self.player.set_state(PlayerState::Diving);
+            } else {
+                self.player.set_state(PlayerState::Flapping);
+            }
+        } else {
+        }
+
+        // render on-screen stuff
         self.player.render(ctx);
-
         self.render_debug_info(ctx);
-
         self.obstacle.render(ctx, self.player.x);
+
+        // detect passed obstacle
         if self.player.x > self.obstacle.x {
             self.score += 1;
             self.obstacle = Obstacle::new(self.player.x + SCREEN_WIDTH, self.score);
         }
 
-        if self.player.dive_counter >= DIVING_HOLD_LENGTH {
-            self.player.state = PlayerState::Diving;
-        } else if let Some(VirtualKeyCode::Space) = ctx.key {
-            self.player.state = PlayerState::Flapping;
-        } else {
-            self.player.state = PlayerState::Falling;
-        }
-
+        // detect death
         if self.player.y >= SCREEN_HEIGHT || self.obstacle.hit_obstacle(&self.player) {
             self.mode = GameMode::End;
+        }
+
+        if self.frame_time > FRAME_DURATION {
+            self.frame_time = 0.0;
+            if self.space_pressed_this_frame {
+                self.space_pressed_this_frame = false;
+            } else if self.player.state != PlayerState::Flapping {
+                self.player.set_state(PlayerState::Falling);
+            }
         }
     }
 
@@ -252,6 +293,7 @@ impl State {
         self.obstacle = Obstacle::new(SCREEN_WIDTH, 0);
         self.mode = GameMode::Playing;
         self.score = 0;
+        self.space_pressed_this_frame = false;
     }
 
     fn main_menu(&mut self, ctx: &mut BTerm) {
