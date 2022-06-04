@@ -18,24 +18,26 @@ enum PlayerState {
 // env config
 const SCREEN_WIDTH: i32 = 80;
 const SCREEN_HEIGHT: i32 = 50;
-const FRAME_DURATION: f32 = 60.0;
+const FRAME_DURATION: f32 = 45.0;
 const BACKGROUND_COLOR: (u8, u8, u8) = NAVY;
 
 // falling consts
 const FALLING_GRAVITY: f32 = 0.5;
-const TERMINAL_FALLING_VELOCITY: f32 = 2.0;
+const TERMINAL_FALLING_VELOCITY: f32 = 1.5;
 const FALLING_CHAR: char = '~';
 
 // flapping consts
 const MAX_FLAPPING_VELOCITY: f32 = -2.0;
-const FLAP_ACCELERATION: f32 = -0.8;
-const FLAP_FRAME_DURATION: usize = 16;
+const FLAP_MAX_ACCELERATION: f32 = -2.0;
+const FLAP_INIT_ACCELERATION: f32 = 0.2;
+const FLAP_DURATION: usize = 8; // in frames
 const FLAPPING_ANIMATION_LENGTH: usize = 8;
 const FLAPPING_CHARS: [char; FLAPPING_ANIMATION_LENGTH] = ['v', 'V', 'v', '_', '-', '^', 'A', '^'];
+//const FLAPPING_CHARS: [char; FLAPPING_ANIMATION_LENGTH] = ['V', 'v', '-', '^', 'A'];
 
 // diving consts
 const DIVING_CHAR: char = 'v';
-const DIVING_HOLD_LENGTH: usize = 2;
+const DIVING_HOLD_LENGTH: usize = 3;
 const DIVING_GRAVITY: f32 = 0.8;
 const TERMINAL_DIVING_VELOCITY: f32 = 3.5;
 
@@ -99,9 +101,8 @@ impl Player {
                 YELLOW,
                 BACKGROUND_COLOR,
                 to_cp437(
-                    FLAPPING_CHARS[(self.flap_frame
-                        / (FLAP_FRAME_DURATION / FLAPPING_ANIMATION_LENGTH))
-                        as usize],
+                    FLAPPING_CHARS
+                        [(self.flap_frame / (FLAP_DURATION / FLAPPING_ANIMATION_LENGTH)) as usize],
                 ),
             ),
             PlayerState::Diving => {
@@ -131,7 +132,14 @@ impl Player {
                     self.velocity += FALLING_GRAVITY;
                 }
                 if self.velocity > MAX_FLAPPING_VELOCITY {
-                    self.velocity += FLAP_ACCELERATION;
+                    // scale acceleration with the progress of the flap animation
+                    let vel_tmp = FLAP_INIT_ACCELERATION
+                        + ((FLAP_MAX_ACCELERATION - FLAP_INIT_ACCELERATION) / FLAP_DURATION as f32)
+                            * self.flap_frame as f32;
+                    print!("{:?}\t", vel_tmp);
+                    self.velocity += vel_tmp;
+                } else {
+                    self.velocity = MAX_FLAPPING_VELOCITY;
                 }
             }
         }
@@ -146,7 +154,7 @@ impl Player {
     fn handle_flap(&mut self) {
         if self.state == PlayerState::Flapping {
             self.flap_frame += 1;
-            if self.flap_frame == FLAP_FRAME_DURATION {
+            if self.flap_frame == FLAP_DURATION {
                 self.set_state(PlayerState::Falling);
             }
         }
