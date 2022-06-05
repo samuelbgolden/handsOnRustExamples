@@ -18,7 +18,7 @@ enum PlayerState {
 // general game constants
 const SCREEN_WIDTH: i32 = 80;
 const SCREEN_HEIGHT: i32 = 50;
-const FRAME_DURATION: f32 = 70.0;
+const FRAME_DURATION: f32 = 60.0;
 const BGR_COLOR: (u8, u8, u8) = NAVY;
 const MIN_GAP_SIZE: i32 = 4;
 
@@ -70,6 +70,7 @@ struct Obstacle {
     size: i32,
 }
 
+#[derive(Debug)]
 struct Objective {
     x: i32,
     y: i32,
@@ -228,7 +229,7 @@ impl Objective {
         let mut random = RandomNumberGenerator::new();
         Objective {
             x,
-            y: random.range(0, SCREEN_HEIGHT - 1),
+            y: random.range(2, SCREEN_HEIGHT - 1),
         }
     }
 
@@ -291,6 +292,11 @@ impl State {
         ctx.print(60, 2, &format!("vel={}", self.player.velocity));
         ctx.print(60, 3, &format!("fidx={}", self.player.flap_frame));
         ctx.print(60, 4, &format!("state={:?}", self.player.state));
+        ctx.print(
+            60,
+            5,
+            &format!("obj={},{}", self.objective.x, self.objective.y),
+        );
     }
 
     fn play(&mut self, ctx: &mut BTerm) {
