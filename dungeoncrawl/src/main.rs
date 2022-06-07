@@ -1,7 +1,6 @@
 mod camera;
 mod map;
 mod map_builder;
-mod player;
 
 mod prelude {
     pub use bracket_lib::prelude::*;
@@ -15,7 +14,6 @@ mod prelude {
     pub use crate::camera::*;
     pub use crate::map::*;
     pub use crate::map_builder::*;
-    pub use crate::player::*;
 }
 
 use prelude::*;
@@ -53,9 +51,9 @@ impl GameState for State {
         ctx.set_active_console(1);
         ctx.cls();
 
-        self.player.update(ctx, &self.map, &mut self.camera);
-        self.map.render(ctx, &self.camera);
-        self.player.render(ctx, &self.camera);
+        // TODO: Execute systems
+        // TODO: Render draw buffer
+
         self.check_quit(ctx);
     }
 }
