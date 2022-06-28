@@ -9,8 +9,8 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
             glyph: to_cp437('@'),
         },
         Health {
-            current: 20,
-            max: 20,
+            current: 10,
+            max: 10,
         },
         Name("YOU".to_string()),
     ));
@@ -22,19 +22,51 @@ pub fn spawn_monster(ecs: &mut World, rng: &mut RandomNumberGenerator, pos: Poin
         _ => orc(),
     };
 
+    // added this per the suggestion on p.163
+    match rng.roll_dice(1, 5) {
+        // healthy enemy
+        1..=4 => ecs.push((
+            Enemy,
+            pos,
+            Render {
+                color: ColorPair::new(WHITE, BLACK),
+                glyph,
+            },
+            ChasingPlayer,
+            Health {
+                current: hp,
+                max: hp,
+            },
+            Name(name),
+        )),
+        // drunk enemy
+        _ => ecs.push((
+            Enemy,
+            pos,
+            Render {
+                color: ColorPair::new(WHITE, BLACK),
+                glyph,
+            },
+            MovingRandomly,
+            Health {
+                current: hp,
+                max: hp,
+            },
+            Name(format!("Drunken {}", name)),
+        )),
+    };
+}
+
+pub fn spawn_amulet_of_yala(ecs: &mut World, pos: Point) {
     ecs.push((
-        Enemy,
+        Item,
+        AmuletOfYala,
         pos,
         Render {
             color: ColorPair::new(WHITE, BLACK),
-            glyph,
+            glyph: to_cp437('|'),
         },
-        MovingRandomly,
-        Health {
-            current: hp,
-            max: hp,
-        },
-        Name(name),
+        Name("Amulet of Yala".to_string()),
     ));
 }
 
