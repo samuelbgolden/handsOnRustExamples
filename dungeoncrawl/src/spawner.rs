@@ -13,6 +13,7 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
             max: 10,
         },
         Name("YOU".to_string()),
+        FieldOfView::new(8),
     ));
 }
 
