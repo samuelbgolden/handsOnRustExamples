@@ -1,9 +1,12 @@
 mod automata;
+mod drunkard;
 mod empty;
 mod rooms;
 
 use crate::prelude::*;
 use automata::CellularAutomataArchitect;
+use drunkard::DrunkardsWalkArchitect;
+#[allow(unused_imports)]
 use empty::EmptyArchitect;
 use rooms::RoomsArchitect;
 
@@ -27,8 +30,14 @@ pub struct MapBuilder {
 
 impl MapBuilder {
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
-        let mut architect = CellularAutomataArchitect {};
-        architect.new(rng)
+        let mut architect: Box<dyn MapArchitect> = match rng.range(0, 3) {
+            0 => Box::new(DrunkardsWalkArchitect {}),
+            1 => Box::new(RoomsArchitect {}),
+            _ => Box::new(CellularAutomataArchitect {}),
+        };
+        println!("MAP ARCHITECT: {}", architect);
+        let mut mb = architect.new(rng);
+        mb
     }
 
     fn fill(&mut self, tile: TileType) {
